@@ -10,15 +10,15 @@ console.log("Logs from your program will appear here!");
 const server = net.createServer((socket) => {
     socket.on("data", async (data) => {
         let request = data.toString().split("\r\n");
-        let path = request[0].split(" ");
-        if (path[1] === "/") {
+        let pathRequest = request[0].split(" ");
+        if (pathRequest[1] === "/") {
             socket.write("HTTP/1.1 200 OK\r\n\r\n");
-        } else if (path[1].includes("/echo/")) {
-            let content = path[1].replace("/echo/", "");
+        } else if (pathRequest[1].includes("/echo/")) {
+            let content = pathRequest[1].replace("/echo/", "");
             socket.write(
                 `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
             );
-        } else if (path[1].includes("/user-agent")) {
+        } else if (pathRequest[1].includes("/user-agent")) {
             let userAgent = "";
             for (let i = 1; i < request.length; i++) {
                 if (request[i].startsWith("User-Agent:")) {
@@ -27,8 +27,8 @@ const server = net.createServer((socket) => {
                 }
             }
             socket.write(`HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`);
-        } else if(path[1].includes("/files/")) {
-            const fileName = path[1].replace("/files/", "")
+        } else if(pathRequest[1].includes("/files/")) {
+            const fileName = pathRequest[1].replace("/files/", "")
             const file = path.join(filePath, fileName)
             if (fs.existsSync(file)) {
                 const content = await fs.promises.readFile(file)
