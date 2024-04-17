@@ -8,6 +8,10 @@ const server = net.createServer((socket) => {
         let request = data.toString().split("\r\n")
         let path = request[0].split(" ")
         if(path[1] === "/") socket.write('HTTP/1.1 200 OK\r\n\r\n')
+        else if (request.includes("/echo/")) {
+            let content = request[1].replace("/echo/", "")
+            socket.write(`HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`)
+        }
         else socket.write('HTTP/1.1 404 Not Found\r\n\r\n')
         socket.end()
     });
